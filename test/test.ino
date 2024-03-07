@@ -24,14 +24,16 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
 
 
 
-int k = (-SERVOMIN + SERVOMAX)/2; 
+int dc_OffsetVec = [1500;1500;1500;1500;1500;1500;1500;1500;1500;1500;1500;1500]; 
 int i = 0;
+int amplitude = 500;
 
 
 
 void motor(int number, float phase){                          
   float a = (phase * pi) / 24;                                   // Change this section according to your uses, I prefer to divide phase to 24
-  float length = (SERVOMIN + SERVOMAX)/2 + k*sin(((i*pi)/100 + a));    //Some transformation again for pulse length count
+  int dc_Offset = dc_OffsetVec[number];
+  float length = dc_Offset + amplitude*sin(((i*pi)/100 + a));    //Some transformation again for pulse length count
   pwm.setPWM(number, 0, length);                                 //This function comes from library
 }
 
