@@ -24,7 +24,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
 
 
 
-int dc_OffsetVec[12] = {1240,1360,1500,1500,1500,1500,1500,1500,1500,1500,1500,1500}; //This array is representing our initial position, adjust the value according to your motor position.
+int dc_OffsetVec[12] = {1512,1535,1532,1495,1490,1530,1520,1522,1527,1525,1555,1547}; //This array is representing our initial position, adjust the value according to your motor position.
 int i = 0;
 int amplitude = 500;
 
@@ -69,6 +69,7 @@ void loop() {
     motor_set(9);
     motor_set(10);
     motor_set(11);
+    
   
 
     
