@@ -24,9 +24,10 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
 
 
 
-int dc_OffsetVec[12] = {1512,1535,1532,1495,1490,1530,1520,1522,1527,1525,1555,1547} //This array is representing our initial position, adjust the value according to your motor position.
+int dc_OffsetVec[12] = {1512,1535,1532,1495,1490,1530,1520,1522,1527,1525,1555,1547}; //This array is representing our initial position, adjust the value according to your motor position.
 int i = 0;
-int amplitude = 500;
+int amplitude = 0;
+int amplitude_values = 500;
 
 
 
@@ -52,25 +53,80 @@ void setup() {
   pwm.setOscillatorFrequency(27000000);                  
   pwm.setPWMFreq(SERVO_FREQ);                                
   delay(10);
+
+  while (amplitude< amplitude_values) {
+    amplitude += 20;
+    motor(0,0);
+    motor(1,1);
+    motor(2,2);
+    motor(3,3);
+    motor(4,4);
+    motor(5,5);
+    motor(6,6);
+    motor(7,7);
+    motor(8,8);
+    motor(9,9);
+    motor(10,10); 
+    motor(11,11);
+    i++;
+  }
 }
 
 
 void loop() {
-
-  motor(0,0);
-  motor(1,1);
-  motor(2,2);
-  motor(3,3);
-  motor(4,4);
-  motor(5,5);
-  motor(6,6);
-  motor(7,7);
-  motor(8,8);
-  motor(9,9);
-  motor(10,10); 
-  motor(11,11);
   
+  char rc;
+  if (Serial.available()) {
+    rc = Serial.read();
+    Serial.println(rc);
+
+    if (rc == 's') {
+      while (amplitude > 0) {
+        motor(0, 0);
+        motor(1, 1);
+        motor(2, 2);
+        motor(3, 3);
+        motor(4, 4);
+        motor(5, 5);
+        motor(6, 6);
+        motor(7, 7);
+        motor(8, 8);
+        motor(9, 9);
+        motor(10, 10);
+        motor(11, 11);
+        amplitude -= 20;
+      }
+    }
+
+    if (rc >= '0' && rc <= '9') {
+      Serial.print("Amplitude is set to ");
+      Serial.println(rc);
+      amplitude = rc - '0';
+    }
+  }
+
+  motor(0, 0);
+  motor(1, 1);
+  motor(2, 2);
+  motor(3, 3);
+  motor(4, 4);
+  motor(5, 5);
+  motor(6, 6);
+  motor(7, 7);
+  motor(8, 8);
+  motor(9, 9);
+  motor(10, 10);
+  motor(11, 11);
+
   i++;
+
+
+  
+
+
+  
+
     
+
     
 }
