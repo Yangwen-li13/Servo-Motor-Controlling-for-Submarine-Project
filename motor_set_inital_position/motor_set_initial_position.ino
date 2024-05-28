@@ -30,12 +30,14 @@ int amplitude = 500;
 
 
 
+
 void motor(int number, float phase){                          
   float a = (phase * pi) / 24;                                   // Change this section according to your uses, I prefer to divide phase to 24
   int dc_Offset = dc_OffsetVec[number];
-  float length = dc_Offset + amplitude*sin(((i*pi)/100 + a));    //Some transformation again for pulse length count
+  float length = dc_Offset + amplitude*sin((millis()*pi/1000 + a));    //Some transformation again for pulse length count
   pwm.setPWM(number, 0, length);                                 //This function comes from library
 }
+
 
 void motor_set(int number){
   pwm.setPWM(number, 0, dc_OffsetVec[number]);
