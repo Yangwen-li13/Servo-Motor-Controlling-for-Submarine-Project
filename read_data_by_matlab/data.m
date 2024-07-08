@@ -1,3 +1,4 @@
+clear all;
 s = serialport("COM4", 115200); 
 configureTerminator(s, "LF");
 num_samples = 270; 
