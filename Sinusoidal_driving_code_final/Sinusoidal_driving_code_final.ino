@@ -12,6 +12,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
 
 //https://www.savoxusa.com/products/savsw0231mgp-waterproof-std-digital#technical-details
 
+
 //Some transformation to get length values, you can think the period as 1/frequency and proportion to length count
 //Change values according to your uses
 #define SERVOMIN  1000 // This is the 'minimum' pulse length count (out of 4096)
@@ -21,7 +22,6 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40, Wire);
 #define SERVO_FREQ 240 // Frequency of servo
 #define pi 3.1415926535897932384626433832795
 #define NUM_MOTORS 12
-#define UPDATE_INTERVAL 200
 
 
 int dc_OffsetVec[NUM_MOTORS] = {1532,1580,1527,1482,1494,1450,1530,1530,1500,1530,1535,1547}; //This array is representing our initial position, adjust the value according to your motor position.
@@ -37,77 +37,53 @@ float frequency_value = 0.5;                      //This is fixed frequency valu
 float phase_value;
 
  
+
 void motor(int number, float phase){                          
   phase_value = (phase * pi) / 24;                                                                             // Change this section according to your uses, I prefer to divide phase to 24
   int dc_Offset = dc_OffsetVec[number];
   float length = dc_Offset + amplitude*sin((millis() *(2 * pi * frequency_value) / 1000 + phase_value));    //Some transformation again for pulse length count
   pwm.setPWM(number, 0, length);                                                                               //This function comes from library
-}     //This function is essential to give PWM to motors
-
+}                                                                         //This function is essential to give PWM to motors
 
 void motorCont() {
   for (int i = 0; i < NUM_MOTORS; i++) {
     motor(i, i);
   }
-}                                                                          //This function provides to turn motors with constant phase difference in the loop                                                                                     
-
+}                                                                         //This function provides to turn motors with constant phase difference in the loop                                                                                     
                                                                       
 void motor_set(int number){
   pwm.setPWM(number, 0, dc_OffsetVec[number]);
-}                                                                           //This function is to turn motors initial positions
+}                                                                         //This function is to turn motors initial positions
 
 void stop_motor() {
-    while (0 < amplitude) {
-      motor(0,0);
-      motor(1,1);
-      motor(2,2);
-      motor(3,3);
-      motor(4,4);
-      motor(5,5);
-      motor(6,6);
-      motor(7,7);
-      motor(8,8);
-      motor(9,9);
-      motor(10,10); 
-      motor(11,11);
-      if(millis() % 200 < 5) {
-        amplitude -= 25;
-      if (0 > amplitude){
-          amplitude = 0;
-
-      }
+  int steps = 500;
+  for (int i = steps; i >= 0; i--) {
+    for (int j = 0; j < NUM_MOTORS; j++) {
+      motor(j, j);
     }
-  delay(10);
+    amplitude = amplitude_final * sin(i * pi / (2 * steps)); // Sine-based ramp down
+    delay(10);
   }
-}                                                                            //This function is to stop motors
-
+  amplitude = 0;
+  amplitude_final = 0;
+  delay(10);
+}                                                                         //This function is to stop motors
 
 void start_motor(int target_amplitude) {
-  while (amplitude < target_amplitude) {
-    motor(0,0);
-    motor(1,1);
-    motor(2,2);
-    motor(3,3);
-    motor(4,4);
-    motor(5,5);
-    motor(6,6);
-    motor(7,7);
-    motor(8,8);
-    motor(9,9);
-    motor(10,10); 
-    motor(11,11);
-    if(millis() % 200 < 3.5) {
-      amplitude += 25;
-    if(amplitude > target_amplitude){
-      amplitude = target_amplitude;
+  int steps = 1000;
+  for (int i = 0; i <= steps; i++) {
+    for (int j = 0; j < NUM_MOTORS; j++) {
+      motor(j, j);
     }
+    amplitude = target_amplitude * sin(i * pi / (2 * steps)); // Sine-based ramp up
+    delay(10);
   }
+  amplitude = target_amplitude;
+  amplitude_final = amplitude;
   delay(10);
-  }
-}                                                                            //This function is to start motors.             
+}                                                                         //This function is to start motors.             
 
-
-void changeParameters(int max_amplitude, int percentage, float new_frequency){          //Don't forget to stop motors before using this function!!!!
+void changeParameters(int max_amplitude, int percentage, float new_frequency){         
   float constantA_copy = max_amplitude * (percentage / 100.0);
   int constantA = max_amplitude * (percentage / 100.0);
   int amplitude_a = 0;
@@ -172,40 +148,54 @@ void loop() {
     rc = Serial.read();
     Serial.println(rc);
 
-    if (rc == 's') {
+    if (rc == 'stop') {
       stop_motor();
     }                           //Stops motor
     
-    if(rc == 'c'){
+    if(rc == 'start'){
       start_motor(amplitude_final);
     }
     
-    if (rc == 'a') {
+    if (rc == 'test') {
       Serial.println("Changing is Started");
-      int amplitude2 = 0; 
-      float frequency2 = 0;
-      int percentage = 0;
+      int amp = 0;
+      int per = 0;
+      float freq = 0;
       stop_motor();
 
-      Serial.println("Enter the amplitude value");
-      while(amplitude2 == 0){
-        amplitude2 = Serial.parseInt();
+      Serial.println("Enter the values such that 'amp(amplitude)_value_per(percentage)_value_freq(frequency)_value'");
+      Serial.println("For example: 'amp_400_per_25_freq_0.4' ");
+      
+      String message = "" ;
+      
+      while(message == ""){
+        message = Serial.readStringUntil('\n');
       }
-      delay(10);
-      Serial.println("Enter the percentage of amplitude value");
-      while(percentage == 0){
-        percentage = Serial.parseInt();
-      }
-      delay(10);
-      Serial.println("Enter the frequency value");
-      while(frequency2 == 0){
-        frequency2 = Serial.parseFloat();
-      }
+
+      Serial.println("your message is " + message);
+      int firstUnderscore = message.indexOf('_');
+      int secondUnderscore = message.indexOf('_', firstUnderscore + 1);
+      int thirdUnderscore = message.indexOf('_', secondUnderscore + 1);
+      int fourthUnderscore = message.indexOf('_', thirdUnderscore + 1);
+      int fifthUnderscore = message.indexOf('_', fourthUnderscore + 1);
+
+      // Extract the values
+      amp = message.substring(firstUnderscore + 1, secondUnderscore).toInt();
+      per = message.substring(thirdUnderscore + 1, fourthUnderscore).toInt();
+      freq = message.substring(fifthUnderscore + 1).toFloat();
+    
+      // Print the values
+      Serial.print("Amplitude: ");
+      Serial.print(amp);
+      Serial.print(", Period: ");
+      Serial.print(per);
+      Serial.print(", Frequency: ");
+      Serial.println(freq);
+      
       delay(10);
 
-      changeParameters(amplitude2, percentage, frequency2);
+      changeParameters(amp, per, freq);
       
-  
     }
   }
   
