@@ -1,12 +1,13 @@
 clear all
-serialportlist("available");
-arduino = serialport("COM4", 9600, "Timeout", 10);
+portArd = serialportlist("available");
+arduino = serialport(portArd, 9600, "Timeout", 10);
 configureTerminator(arduino, "LF");
 pause(2);
-message = "d"
-writeline(arduino,message);
-response = readline(arduino);
-disp(response);
-response = readline(arduino);
-disp(response);
+%{
+sendMessage(arduino, 'stop', 10)   : Stops motors
+sendMessage(arduino, 'start', 10)   : Starts motors
+sendMessage(arduino, 'test', 10)   : Changes variables to test motors
+%}
 
+dataLine = readline(arduino);
+disp(dataLine);
