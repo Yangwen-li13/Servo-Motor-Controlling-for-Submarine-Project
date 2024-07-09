@@ -1,5 +1,5 @@
 # Servo-Motor-Controlling-for-Submarine-Project
-This work is from my internship at METU-ROMER (Center for Robotics and AI).<br>
+This work is from my internship at <b>METU-ROMER (Center for Robotics and AI) </b> .<br>
 With the guidance of the researcher Atakan DURMAZ, We constructed a submarine that moves by wave movement of the fin.<br>
 In this project, I just looked at the side of motor controlling and ensuring the correctness of moving motors in the water. I am writing this repository to access people who want to use servo motors as sinusoidal waves.
 
