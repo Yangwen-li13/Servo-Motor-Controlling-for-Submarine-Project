@@ -42,28 +42,19 @@ void setup() {
   Serial.println("Process is starting");
   pwm.begin();                                               
   pwm.setOscillatorFrequency(27000000);                  
-  pwm.setPWMFreq(SERVO_FREQ);                                
+  pwm.setPWMFreq(SERVO_FREQ);
+  Serial.println("Initilitazation is completed");                                
   delay(10);
 
 }
 
 
 void loop() {
-  char rc;
   if (Serial.available()) {
-    rc = Serial.read();
-    Serial.println(rc);
-
-    if (rc == 's') {
-      stop_motor();
-    }                           //Stops motor
+    String rc = Serial.readStringUntil('\n');
     
-    if(rc == 'c'){
-      start_motor(amplitude_final);
-    }
-    
-    if (rc == 't') {
-      Serial.println("Changing is Started");
+    if (rc == "test") {
+      Serial.println("Test is starting");
       int amp = 0;
       int per = 0;
       float freq = 0;
@@ -71,10 +62,9 @@ void loop() {
 
       Serial.println("Enter the values such that 'amp(amplitude)_value_per(percentage)_value_freq(frequency)_value'");
       Serial.println("For example: 'amp_400_per_25_freq_0.4' ");
-      
-      String message = "" ;
-      
-      while(message == ""){
+
+      String message = "";
+      while (message == "") {
         message = Serial.readStringUntil('\n');
       }
 
@@ -85,32 +75,23 @@ void loop() {
       int fourthUnderscore = message.indexOf('_', thirdUnderscore + 1);
       int fifthUnderscore = message.indexOf('_', fourthUnderscore + 1);
 
-      // Extract the values
       amp = message.substring(firstUnderscore + 1, secondUnderscore).toInt();
       per = message.substring(thirdUnderscore + 1, fourthUnderscore).toInt();
       freq = message.substring(fifthUnderscore + 1).toFloat();
-    
-      // Print the values
+
       Serial.print("Amplitude: ");
       Serial.print(amp);
       Serial.print(", Period: ");
       Serial.print(per);
       Serial.print(", Frequency: ");
       Serial.println(freq);
-      
-      delay(10);
 
+      delay(10);
       changeParameters(amp, per, freq);
-      
-  
     }
   }
-  
-  motorCont();  
+
 }
-
-
-
 
 
 //**********************FUNCTIONS*************************
@@ -169,8 +150,9 @@ void changeParameters(int max_amplitude, int percentage, float new_frequency){
   int amplitude_a = 0;
   int durationStop = 5000;
   int durationWorking = 10000;
+  
 
-
+  Serial.println("Test began");
   while(amplitude_a < max_amplitude){
     
     if(constantA != constantA_copy){
@@ -201,7 +183,8 @@ void changeParameters(int max_amplitude, int percentage, float new_frequency){
       motorCont();
     }
   }
-  Serial.println("Test has been done!");
+  stop_motor();
+  Serial.println("Test has been done! Write new command");
   amplitude_final = amplitude_a;
 }                                                                         //This function is to test our system.                                                                      
 
