@@ -138,7 +138,7 @@ void setup() {
   delay(10);
 
   start_motor(amplitude_value);
-  Serial.print("Started!");
+  Serial.println("Started!");
 }
 
 
