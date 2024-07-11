@@ -47,7 +47,7 @@ void setup() {
   Serial.println("Initilitazation is completed");       
 
   delay(10);
-  stop_motor();
+  start_motor(400);
 
 }
 
@@ -104,7 +104,13 @@ void loop() {
 void motor(int number, float phase){                          
   phase_value = (phase * pi) / 24;                                                                             // Change this section according to your uses, I prefer to divide phase to 24
   int dc_Offset = dc_OffsetVec[number];
-  float length = dc_Offset + amplitude*sin((millis() *(2 * pi * frequency_value) / 1000 + phase_value));       //Some transformation again for pulse length count
+
+  int L = number + 1 ;
+  float a = log(10) / 11;
+  float k = 1 / (exp(a*12));
+  float exponential_constant = k * exp(a * L); 
+
+  float length = dc_Offset + amplitude*exponential_constant*sin((millis() *(2 * pi * frequency_value) / 1000 + phase_value));       //Some transformation again for pulse length count
   pwm.setPWM(number, 0, length);                                                                               //This function comes from library
 }                                                                         //This function is essential to give PWM to motors.
 
