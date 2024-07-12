@@ -35,13 +35,13 @@ function callbackSerial(src, ~)
         % Ensure the timeVectors matrix can accommodate the new period and index
         if size(timeVectors, 1) < periodNumber
             timeVectors(periodNumber, timeVectorIndex) = value;
-        else
-            timeVectors(periodNumber, timeVectorIndex) = value;
         end
         timeVectorIndex = timeVectorIndex + 1;
     elseif strcmp(strtrim(data), "Test has been done! Write new command")
         disp("Test has been done! Write new command.");
         saveTimeVectors(timeVectors); % Save the time vectors to a .mat file
+        load("timeVectors.mat");
+        %wave(timeVectors,4,400,25,0.5);
     end
 end
 
