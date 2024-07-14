@@ -43,9 +43,9 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency)
                 StoppingTime = Time3:0.001:Time4;
 
                 % Plot the starting, continuing, and stopping times for the final period
-                plot(StartingTime, (amplitude * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
-                plot(StoppingTime, (amplitude * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
-                plot(ContinuingTime, (amplitude * i * percentage / 100) * exponential_constant * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
+                plot(StartingTime, (amplitude * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1)) * i * percentage / 100) .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
+                plot(StoppingTime, (amplitude * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4)) * i * percentage / 100) .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
+                plot(ContinuingTime, (amplitude * i * percentage / 100) * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
             end
         end
     end
