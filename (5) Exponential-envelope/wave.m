@@ -54,7 +54,7 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency)
     xlabel('Time (s)');
     ylabel('Length (without DC Offset)');
     title('Motor Length vs Time (without DC Offset)');
-    legend('Starting,','Stopping' ,'Active', 'Waiting', 'Location', 'Best');
+    legend('Starting','Stopping' ,'Active', 'Waiting', 'Location', 'Best');
     
     
     hold off;
