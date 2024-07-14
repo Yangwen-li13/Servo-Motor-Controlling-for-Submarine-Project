@@ -70,7 +70,7 @@ void motor(int number, float phase) {
   float a = log(10) / 11;
   float k = 1 / (exp(a * 12));
   float exponential_constant = k * exp(a * L);
-  float length = dc_Offset + amplitude * exponential_constant * sin((millis() * (2 * pi * frequency_value) / 1000 + phase_value));
+  float length = dc_Offset + amplitude * sin((millis() * (2 * pi * frequency_value) / 1000 + phase_value));
   pwm.setPWM(number, 0, length);
 }
 
