@@ -2,7 +2,7 @@ clear; clc;
 
 % Initialize serial communication with Arduino
 portArd = serialportlist("available");
-arduino = serialport(portArd(1), 9600);
+arduino = serialport(portArd(1), 9600,'Timeout',40);
 configureCallback(arduino, "terminator", @callbackSerial);
 configureTerminator(arduino, "LF");
 
@@ -25,6 +25,9 @@ function callbackSerial(src, ~)
 
     
     data = readline(src);
+    if isempty(data)
+        return;
+    end
     disp(data);
     
 
@@ -54,13 +57,8 @@ function callbackSerial(src, ~)
 
         timeVectorIndex = timeVectorIndex + 1;
     elseif strcmp(strtrim(data), "Test has been done! Write new command")
-        disp("Test has been done! Write new command.");
         save('timeVectors.mat', 'timeVectors');
         disp('Time vectors saved to timeVectors.mat');
         plotReferenceWave();
     end
 end
-
-
-
-
