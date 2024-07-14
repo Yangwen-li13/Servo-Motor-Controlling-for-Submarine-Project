@@ -33,9 +33,9 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency)
                 WaitingTime = Time4:Time5;
 
                 % Plot the starting, continuing, and waiting times
-                plot(StartingTime, (amplitude * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
-                plot(StoppingTime, (amplitude * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
-                plot(ContinuingTime, (amplitude * i * percentage / 100) * exponential_constant * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
+                plot(StartingTime, (amplitude * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1)) * i * percentage / 100) .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
+                plot(StoppingTime, (amplitude * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4)) * i * percentage / 100) .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
+                plot(ContinuingTime, (amplitude * i * percentage / 100) * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
                 plot(WaitingTime, zeros(size(WaitingTime)), 'r');
             else
                 StartingTime = Time1:Time2;
