@@ -1,62 +1,64 @@
-function wave(timeVector, periodNumber, amplitude, percentage, frequency)
-    % Convert time vector to relative time in seconds
-    timeInitial = timeVector - timeVector(1, 1);
-    time = timeInitial / 1000;
+clear; clc;
 
-    % Starting time for sine wave calculation
-    TimeSin = time(1, 1);
+% Initialize serial communication with Arduino
+portArd = serialportlist("available");
+arduino = serialport(portArd(1), 9600,'Timeout',40);
+configureCallback(arduino, "terminator", @callbackSerial);
+configureTerminator(arduino, "LF");
 
-    % Create a figure for plotting
-    figure('Name', 'Reference Wave', 'NumberTitle', 'off');
-    hold on; % Allows multiple plots on the same figure
+% Initialize variables
+parametersVectors = [];
+timeVectors = [];
+periodNumber = 0;
+timeVectorIndex = 1;
 
-    % Loop through each motor
-    for motorNumber = 0:11
-        phase = (motorNumber * pi) / 24;
-        L = motorNumber + 1;
-        a = log(10) / 11;
-        k = 1 / (exp(a * 12));
-        exponential_constant = k * exp(a * L);
-
-        % Loop through each period
-        for i = 1:periodNumber
-            Time1 = time(i, 1);
-            Time2 = time(i, 2);
-            Time3 = time(i, 3);
-            Time4 = time(i, 4);
-
-            if i ~= periodNumber
-                Time5 = time(i + 1, 1);
-                StartingTime = Time1:0.001:Time2;
-                ContinuingTime = Time2:0.001:Time3;
-                StoppingTime = Time3:0.001:Time4;
-                WaitingTime = Time4:Time5;
-
-                % Plot the starting, continuing, and waiting times
-                plot(StartingTime, (amplitude * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
-                plot(StoppingTime, (amplitude * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
-                plot(ContinuingTime, (amplitude * i * percentage / 100) * exponential_constant * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
-                plot(WaitingTime, zeros(size(WaitingTime)), 'r');
-            else
-                StartingTime = Time1:Time2;
-                ContinuingTime = Time2:Time3;
-                StoppingTime = Time3:Time4;
-
-                % Plot the starting, continuing, and stopping times for the final period
-                plot(StartingTime, (amplitude * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
-                plot(StoppingTime, (amplitude * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
-                plot(ContinuingTime, (amplitude * i * percentage / 100) * exponential_constant * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
-            end
-        end
+% Callback function for serial communication
+function callbackSerial(src, ~)
+    persistent timeVectors periodNumber timeVectorIndex parametersVectors;
+    
+    if isempty(timeVectors)
+        timeVectors = []; % Initialize if empty
+    end
+    if isempty(parametersVectors)
+        parametersVectors = [];
     end
 
-    % Labels and title
-    xlabel('Time (s)');
-    ylabel('Length (without DC Offset)');
-    title('Motor Length vs Time (without DC Offset)');
-    legend('Starting,','Stopping' ,'Active', 'Waiting', 'Location', 'Best');
     
+    data = readline(src);
+    if isempty(data)
+        return;
+    end
+    disp(data);
     
-    hold off;
-    
+
+    if startsWith(data, "Amplitude:")
+        values = sscanf(data, 'Amplitude: %d, Period: %d, Frequency: %f');
+        amp = values(1);
+        per = values(2);
+        freq = values(3);
+        save('parameters.mat', 'amp', 'per', 'freq');
+        disp('Parameters saved to parameters.mat');
+
+    end
+
+    % Check for test period message
+    if startsWith(data, "Test Period is:")
+        periodNumber = str2double(readline(src));
+        disp(['Period Number: ', num2str(periodNumber)]);
+        timeVectorIndex = 1; % Reset time vector index for the new test period
+    elseif contains(data, "timeVector[")
+        % Extract the time vector value
+        value = str2double(readline(src));
+        disp(['Time Vector Value: ', num2str(value)]);
+        
+        % Ensure the timeVectors matrix can accommodate the new period and index
+
+            timeVectors(periodNumber, timeVectorIndex) = value;
+
+        timeVectorIndex = timeVectorIndex + 1;
+    elseif strcmp(strtrim(data), "Test has been done! Write new command")
+        save('timeVectors.mat', 'timeVectors');
+        disp('Time vectors saved to timeVectors.mat');
+        plotReferenceWave();
+    end
 end
