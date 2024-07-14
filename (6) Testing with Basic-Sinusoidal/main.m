@@ -13,8 +13,4 @@ periodNumber = 0;
 timeVectorIndex = 1;
 
 % Callback function for serial communication
-
 callbackSerial(arduino);
-
-
-
