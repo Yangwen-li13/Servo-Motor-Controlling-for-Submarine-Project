@@ -27,9 +27,9 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency)
 
             if i ~= periodNumber
                 Time5 = time(i + 1, 1);
-                StartingTime = Time1:0.01:Time2;
-                ContinuingTime = Time2:0.01:Time3;
-                StoppingTime = Time3:Time4;
+                StartingTime = Time1:0.001:Time2;
+                ContinuingTime = Time2:0.001:Time3;
+                StoppingTime = Time3:0.001:Time4;
                 WaitingTime = Time4:Time5;
 
                 % Plot the starting, continuing, and waiting times
@@ -58,4 +58,5 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency)
     
     
     hold off;
+    
 end
