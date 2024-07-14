@@ -13,10 +13,11 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency)
     % Loop through each motor
     for motorNumber = 0:11
         phase = (motorNumber * pi) / 24;
-        L = motorNumber + 1;
-        a = log(10) / 11;
-        k = 1 / (exp(a * 12));
-        exponential_constant = k * exp(a * L);
+        % Since this is test for basic sinusoidal driving, we do not need
+        % L = motorNumber + 1;
+        % a = log(10) / 11;
+        % k = 1 / (exp(a * 12));
+        % exponential_constant = k * exp(a * L);
 
         % Loop through each period
         for i = 1:periodNumber
