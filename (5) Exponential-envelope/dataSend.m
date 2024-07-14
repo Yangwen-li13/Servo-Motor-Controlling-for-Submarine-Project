@@ -33,9 +33,9 @@ function callbackSerial(src, ~)
         disp(['Time Vector Value: ', num2str(value)]);
         
         % Ensure the timeVectors matrix can accommodate the new period and index
-        if size(timeVectors, 1) < periodNumber
+        %if size(timeVectors, 1) < periodNumber
             timeVectors(periodNumber, timeVectorIndex) = value;
-        end
+        %end
         timeVectorIndex = timeVectorIndex + 1;
     elseif strcmp(strtrim(data), "Test has been done! Write new command")
         disp("Test has been done! Write new command.");
