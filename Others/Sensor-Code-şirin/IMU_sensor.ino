@@ -16,10 +16,10 @@ void setup() {
   digitalWrite(10, LOW);
   digitalWrite(11, HIGH);
 
-  if (!bno1.begin()) {
-    Serial.println("BNO055 #1 not detected... Check your wiring or I2C ADDR!");
+ if (!bno1.begin()) {
+   Serial.println("BNO055 #1 not detected... Check your wiring or I2C ADDR!");
     while (1);
-  }
+ }
   Serial.println("BNO055 number 1");
   delay(1000);
 
@@ -38,25 +38,27 @@ void loop() {
   // İlk sensörden veri oku
   digitalWrite(10, LOW);
   digitalWrite(11, HIGH);
-  delay(50);
+  delay(8);
   sensors_event_t orientationData1;
   bno1.getEvent(&orientationData1);
   printEvent(1, &orientationData1);
-  delay(50);
+  delay(8);
 
   // İkinci sensörden veri oku
   digitalWrite(10, HIGH);
   digitalWrite(11, LOW);
-  delay(50);
+  delay(8);
   sensors_event_t orientationData2;
   bno2.getEvent(&orientationData2);
   printEvent(2, &orientationData2);
-  delay(50);
+  delay(8);
 
   Serial.println(); // Satır sonu karakteri ekler
 }
 
 void printEvent(int sensorId, sensors_event_t* event) {
+
+
   Serial.print(sensorId);
   Serial.print(",");
   Serial.print(event->orientation.x);
