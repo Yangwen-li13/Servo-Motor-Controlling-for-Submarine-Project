@@ -31,6 +31,8 @@ function callbackSerial(src, ~)
         per = values(2);
         freq = values(3);
         a = values(4);
+        date = string(datetime('now', 'Format', 'yyyy-MM-dd_HH-mm-ss'));
+        save('date.mat', 'date');
         save('parameters.mat', 'amp', 'per', 'freq', 'a');
         disp('Parameters saved to parameters.mat');
     end
@@ -52,6 +54,6 @@ function callbackSerial(src, ~)
         fclose(text);
         save('timeVectors.mat', 'timeVectors');
         disp('Time vectors saved to timeVectors.mat');
-        plotReferenceWave();
+        referenceWave();
     end
 end
