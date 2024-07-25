@@ -40,7 +40,7 @@ void loop() {
       float freq = 0;
       float exp_a = 0;
       Serial.println("Enter the values such that 'amp(amplitude)_value_per(percentage)_value_freq(frequency)_value_a(exponential envelope constant)_value'");
-      Serial.println("For example: 'amp_400_per_25_freq_0.4_a_0' ");
+      Serial.println("For example: 'amp_400_per_25_freq_0.4_a_0'");
       String message = "";
       while (message == "") {
         message = Serial.readStringUntil('\n');
