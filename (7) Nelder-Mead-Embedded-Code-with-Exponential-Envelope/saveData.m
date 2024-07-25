@@ -13,7 +13,7 @@ function saveData(~)
     timeVectors = vector.timeVectors;
     periodNumber = size(timeVectors, 1); % Determine period number from time vectors
     % timeData = reshape(timeVectors', 1, []); % Reshape timeVectors to a row vector
-    fileName = string(date.date) + '.mat';
+    fileName = 'amp_' + string(amp) + '_f_' + string(freq) + '_per_' + string(per) + '_a_' + string(a) +  '_' + string(date.date) + '.mat';
  
     save(fileName, 'amp', 'per', 'freq', 'a', 'periodNumber', 'timeVectors');
 end
