@@ -12,8 +12,8 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define NUM_MOTORS 12
 
 int dc_OffsetVec[NUM_MOTORS] = {1532,1580,1527,1482,1494,1450,1530,1530,1500,1530,1535,1547};
-int amplitude = 0;
-int amplitude_final = 0;
+int amplitude = 50;
+int amplitude_final = 50;
 int amplitude_value = 400;
 float frequency_value = 0.5;
 float phase_value;
