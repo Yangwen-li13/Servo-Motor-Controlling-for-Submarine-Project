@@ -72,7 +72,7 @@ void loop() {
 }
 
 void motor(int number, float phase) {
-  phase_value = (phase * pi) / 24;
+  phase_value = ((13 - phase) * pi) / 24;
   int dc_Offset = dc_OffsetVec[number];
   int L = number + 1;
   float exponential_constant = exp(a * (13-L));
