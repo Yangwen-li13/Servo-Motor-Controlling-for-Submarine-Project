@@ -31,16 +31,17 @@ function callbackSerial(src, ~)
 
     % Handle saving parameters
     if startsWith(data, "Amplitude:")
-        values = sscanf(data, 'Amplitude: %d, Period: %d, Frequency: %f, Envelope constant: %f');
-        if numel(values) == 4
+        values = sscanf(data, 'Amplitude: %d, Period: %d, Frequency: %f, Envelope constant: %f, Initial Amplitude: %d');
+        if numel(values) == 5
             amp = values(1);
             per = values(2);
             freq = values(3);
             a = values(4);
+            startingAmplitude = values(5);
             perX = per;
             date = string(datetime('now', 'Format', 'yyyy-MM-dd_HH-mm-ss'));
             save('date.mat', 'date');
-            save('parameters.mat', 'amp', 'per', 'freq', 'a');
+            save('parameters.mat', 'amp', 'per', 'freq', 'a', 'startingAmplitude');
             disp('Parameters saved to parameters.mat');
         else
             disp('Error parsing parameters from data.');
@@ -53,7 +54,7 @@ function callbackSerial(src, ~)
         if isnumeric(periodNumber) && ~isnan(periodNumber)
             disp(['Period Number: ', num2str(periodNumber)]);
             timeVectorIndex = 1; % Reset time vector index for the new test period  
-            disp(['Amplitude is: ', num2str(400 * perX * periodNumber/100)])
+            disp(['Amplitude is: '])
         else
             disp('Error parsing test period number.');
         end

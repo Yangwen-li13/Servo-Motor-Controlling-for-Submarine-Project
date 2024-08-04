@@ -10,10 +10,11 @@ function saveData(~)
     per = parameter.per;
     freq = parameter.freq;
     a = parameter.a;
+    startingAmplitude = parameter.startingAmplitude;
     timeVectors = vector.timeVectors;
     periodNumber = size(timeVectors, 1); % Determine period number from time vectors
     % timeData = reshape(timeVectors', 1, []); % Reshape timeVectors to a row vector
     fileName = 'referenceWave_amp_' + string(amp) + '_f_' + string(freq) + '_per_' + string(per) + '_a_' + string(a) +  '_' + string(date.date) + '.mat';
  
-    save(fileName, 'amp', 'per', 'freq', 'a', 'periodNumber', 'timeVectors');
+    save(fileName, 'amp', 'per', 'freq', 'a', 'periodNumber',"startingAmplitude" ,'timeVectors');
 end

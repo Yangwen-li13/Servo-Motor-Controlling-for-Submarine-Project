@@ -8,10 +8,11 @@ function referenceWave(~)
     per = parameter.per;
     freq = parameter.freq;
     a = parameter.a;
+    startingAmplitude = parameter.startingAmplitude;
     timeVectors = vector.timeVectors;
     periodNumber = size(timeVectors, 1); % Determine period number from time vectors
 
     % Call wave function with loaded parameters
-    wave(timeVectors, periodNumber, amp, per, freq, a);
+    wave(timeVectors, periodNumber, amp, per, freq, a, startingAmplitude);
     saveData();
 end

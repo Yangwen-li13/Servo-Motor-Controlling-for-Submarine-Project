@@ -1,4 +1,4 @@
-function wave(timeVector, periodNumber, amplitude, percentage, frequency, a)
+function wave(timeVector, periodNumber, amplitude, percentage, frequency, a, startingAmplitude)
     % Convert time vector to relative time in seconds
     timeInitial = timeVector - timeVector(1, 1);
     time = timeInitial / 1000;
@@ -7,7 +7,7 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency, a)
     TimeSin = time(1, 1);
 
     % Create a figure for plotting
-    figure('Name', 'Reference Wave', 'NumberTitle', 'off');
+    fig = figure('Name', 'Reference Wave', 'NumberTitle', 'off');
     hold on; % Allows multiple plots on the same figure
 
     % Loop through each motor
@@ -29,11 +29,13 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency, a)
                 ContinuingTime = Time2:0.001:Time3;
                 StoppingTime = Time3:0.001:Time4;
                 WaitingTime = Time4:Time5;
+                
+
 
                 % Plot the starting, continuing, and waiting times
-                plot(StartingTime, (amplitude * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
-                plot(StoppingTime, (amplitude * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
-                plot(ContinuingTime, (amplitude * i * percentage / 100) * exponential_constant * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
+                plot(StartingTime, ((startingAmplitude + amplitude * i * percentage / 100) * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1))) .* exponential_constant .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
+                plot(StoppingTime, ((startingAmplitude + amplitude * i * percentage / 100) * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4))) .* exponential_constant .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
+                plot(ContinuingTime, (startingAmplitude + amplitude * i * percentage / 100) * exponential_constant * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
                 plot(WaitingTime, zeros(size(WaitingTime)), 'r');
             else
                 StartingTime = Time1:0.001:Time2;
@@ -41,9 +43,9 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency, a)
                 StoppingTime = Time3:0.001:Time4;
 
                 % Plot the starting, continuing, and stopping times for the final period
-                plot(StartingTime, (amplitude * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
-                plot(StoppingTime, (amplitude * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4)) * i * percentage / 100) .* exponential_constant .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
-                plot(ContinuingTime, (amplitude * i * percentage / 100) * exponential_constant * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
+                plot(StartingTime, ((startingAmplitude + amplitude * i * percentage / 100) * sin((StartingTime - Time1) .* (pi/2) ./ (Time2 - Time1))) .* exponential_constant .* sin((TimeSin + StartingTime) .* (2 * pi * frequency) + phase), 'g');
+                plot(StoppingTime, ((startingAmplitude + amplitude * i * percentage / 100) * sin((StoppingTime - Time4) .* (pi/2) ./ (Time3 - Time4))) .* exponential_constant .* sin((TimeSin + StoppingTime) .* (2 * pi * frequency) + phase), 'm');
+                plot(ContinuingTime, (startingAmplitude + amplitude * i * percentage / 100) * exponential_constant * sin((TimeSin + ContinuingTime) * (2 * pi * frequency) + phase), 'b');
             end
         end
     end
@@ -52,9 +54,19 @@ function wave(timeVector, periodNumber, amplitude, percentage, frequency, a)
     xlabel('Time (s)');
     ylabel('Length (without DC Offset)');
     title('Motor Length vs Time (without DC Offset)');
-    legend('Starting,','Stopping' ,'Active', 'Waiting', 'Location', 'Best');
-    
-    
+    legend('Starting', 'Stopping', 'Active', 'Waiting', 'Location', 'Best');
+
+    % Save the figure
+    if ishandle(fig)
+        saveas(fig, 'referenceWavePlot.fig');
+        try
+            saveas(fig, 'referenceWavePlot.eps');
+        catch ME
+            disp(['Failed to save EPS: ' ME.message]);
+        end
+    else
+        error('Figure handle is not valid.');
+    end
+
     hold off;
-    
 end

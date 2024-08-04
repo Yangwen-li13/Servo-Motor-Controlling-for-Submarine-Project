@@ -1,7 +1,7 @@
 clear all; clc
 % Initialize serial communication with Arduino
 portArd = serialportlist("available");
-arduino = serialport(portArd(1), 9600, 'Timeout', 40);
+arduino = serialport(portArd, 9600, 'Timeout', 40);
 configureCallback(arduino, "terminator", @callbackSerial);
 configureTerminator(arduino, "LF");
 
@@ -22,9 +22,11 @@ g_message = message;
 
 
 global a_counter freq_counter;
-a_counter = 1;
-freq_counter = 1;
+a_counter = 5;
+freq_counter = 5;
 
 pause(1); % Allow time for the connection to be established
 % Callback function for serial communication
 callbackSerial(arduino); % Ensure the callback is invoked
+
+%test(arduino);

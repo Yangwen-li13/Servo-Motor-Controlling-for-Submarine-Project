@@ -12,8 +12,8 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 #define NUM_MOTORS 12
 
 int dc_OffsetVec[NUM_MOTORS] = {1532,1580,1527,1482,1494,1450,1530,1530,1500,1530,1535,1547};
-int amplitude = 50;
-int amplitude_final = 50;
+int amplitude = 0;
+int amplitude_final = 0;
 int amplitude_value = 400;
 float frequency_value = 0.5;
 float phase_value;
@@ -34,13 +34,14 @@ void loop() {
   if (Serial.available()) {
     String rc = Serial.readStringUntil('\n');
     if (rc == "test") {
-      Serial.println("Test is starting");
+      Serial.println("Test is starting"); 
       int amp = 0;
       int per = 0;
       float freq = 0;
       float exp_a = 0;
+      int starting_amplitude = 0;
       Serial.println("Enter the values such that 'amp(amplitude)_value_per(percentage)_value_freq(frequency)_value_a(exponential envelope constant)_value'");
-      Serial.println("For example: 'amp_400_per_25_freq_0.4_a_0'");
+      Serial.println("For example: 'amp_400_per_25_freq_0.4_a_0_startAmp_200'");
       String message = "";
       while (message == "") {
         message = Serial.readStringUntil('\n');
@@ -53,10 +54,13 @@ void loop() {
       int fifthUnderscore = message.indexOf('_', fourthUnderscore + 1);
       int sixthUnderscore = message.indexOf('_', fifthUnderscore + 1);
       int seventhUnderscore = message.indexOf('_', sixthUnderscore + 1);
+      int eightUnderscore = message.indexOf('_', seventhUnderscore + 1);
+      int ninethUnderscore = message.indexOf('_', eightUnderscore + 1);
       amp = message.substring(firstUnderscore + 1, secondUnderscore).toInt();
       per = message.substring(thirdUnderscore + 1, fourthUnderscore).toInt();
       freq = message.substring(fifthUnderscore + 1, sixthUnderscore).toFloat();
-      exp_a = message.substring(seventhUnderscore + 1).toFloat();
+      exp_a = message.substring(seventhUnderscore + 1, eightUnderscore).toFloat();
+      starting_amplitude = message.substring(ninethUnderscore + 1).toInt();
       Serial.print("Amplitude: ");
       Serial.print(amp);
       Serial.print(", Period: ");
@@ -64,9 +68,11 @@ void loop() {
       Serial.print(", Frequency: ");
       Serial.print(freq);
       Serial.print(", Envelope constant: ");
-      Serial.println(exp_a);
+      Serial.print(exp_a);
+      Serial.print(", Initial Amplitude: ");
+      Serial.println(starting_amplitude);
       delay(10);
-      changeParameters(amp, per, freq, exp_a);
+      changeParameters(amp, per, freq, exp_a, starting_amplitude);
     }
   }
 }
@@ -118,17 +124,24 @@ void stop_motor() {
   delay(10);
 }
 
-void changeParameters(int max_amplitude, int percentage, float new_frequency, float new_a) {
+void changeParameters(int max_amplitude, int percentage, float new_frequency, float new_a, int startingAmplitude) {
   float constantA_copy = max_amplitude * (percentage / 100.0);
   int constantA = max_amplitude * (percentage / 100.0);
-  int amplitude_a = 0;
+  int amplitude_a = startingAmplitude;
   int durationStop = 5000;
-  int durationWorking = 10000;
+  int durationWorking = 30000;
   int testPeriod = 0;
   unsigned long timeVector[4];
 
+  a = new_a;
+  frequency_value = new_frequency;
+
   Serial.println("Test began");
-  while (amplitude_a < max_amplitude) {
+  while (amplitude_a < max_amplitude && amplitude_a >= 0) {
+    if (startingAmplitude + constantA > 400) {
+      Serial.println("Starting amplitude is much big!");
+      break;
+    }
     if (constantA != constantA_copy) {
       Serial.println("Percentage cannot divide amplitude as integer!");
       break;
@@ -146,13 +159,11 @@ void changeParameters(int max_amplitude, int percentage, float new_frequency, fl
       break;
     }
 
-    a = new_a;
-    frequency_value = new_frequency;
     amplitude_a += constantA;
     testPeriod += 1;
     Serial.println("Test Period is:");
     Serial.println(testPeriod);
-
+    Serial.println(amplitude_a);
     timeVector[0] = millis();
     start_motor(amplitude_a);
     timeVector[1] = millis();
